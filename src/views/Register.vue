@@ -41,6 +41,11 @@
               <div class="text-center text-muted mb-4">
                 <small>Or sign up with credentials</small>
               </div>
+
+              <base-alert v-if="error" type="danger">
+                <strong>Error!</strong> {{ error }}
+              </base-alert>
+
               <form role="form" @submit.prevent="send">
                 <base-input
                   v-model="first_name"
@@ -130,6 +135,9 @@
   </section>
 </template>
 <script>
+import Api from "@/services/api.service"
+import TokenService from "@/services/token.service"
+
 export default {
   data() {
     return {
@@ -139,6 +147,8 @@ export default {
       tc_number: '',
       phone: '',
       password: '',
+
+      error: ''
     }
   },
   methods: {
