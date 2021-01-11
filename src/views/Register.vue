@@ -143,7 +143,35 @@ export default {
   },
   methods: {
     send() {
-      
+      this.$store.commit('loading', true)
+
+      Api.post('/auth/register', {
+        first_name: this.first_name,
+        last_name: this.last_name,
+        email: this.email,
+        password: this.password,
+        tc_number: this.tc_number,
+        phone: this.phone
+      }).then(data => {
+
+        TokenService.saveToken(data.data.access_token)
+        Api.setHeader()
+        
+        Api.get('/users/me').then(data => {
+
+          this.$store.commit('updateMe', data.data)
+          this.$router.push('/')
+          
+        }).catch(error => {
+          this.error = error.response.data.message
+        }).finally(() => {
+          this.$store.commit('loading', false)
+        })
+
+      }).catch(error => {
+        this.error = error.response.data.message
+        this.$store.commit('loading', false)
+      })
     }
   }
 };
